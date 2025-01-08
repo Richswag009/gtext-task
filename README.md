@@ -114,6 +114,42 @@ This API provides endpoints to interact with the Task Management System. It incl
 
 **http://localhost:8000/api**
 
+
+
+### Register a user
+
+**POST** `/api/auth/register`
+
+#### Request
+
+```json
+  "name": "john doe",
+  "email": "user@example.com",
+  "password": "yourpassword"
+```
+---
+
+### Response
+
+```json
+
+{
+    "status": true,
+    "message": "user register successfully",
+    "data": {
+        "user": {
+            "name": "john doe",
+            "email": "email1@gmail.com",
+            "updated_at": "2025-01-08T18:44:35.000000Z",
+            "created_at": "2025-01-08T18:44:35.000000Z",
+            "id": 2
+        },
+        "token": "jwt token"
+    }
+}
+```
+
+---
 ## Authentication
 
 ### JWT Token Authentication
@@ -140,8 +176,25 @@ To obtain a JWT token, send a `POST` request to the `auth/login` endpoint with y
 
 ```json
 
-  "email": "user@example.com",
-  "password": "yourpassword"
+ {
+    "status": true,
+    "message": "login successful",
+    "data": {
+        "user": {
+            "id": 2,
+            "name": "john doe",
+            "email": "email1@gmail.com",
+            "email_verified_at": null,
+            "created_at": "2025-01-08T18:44:35.000000Z",
+            "updated_at": "2025-01-08T18:44:35.000000Z"
+        },
+        "authorization": {
+            "token": "jwt token",
+            "type": "bearer",
+            "expires_in": 3600
+        }
+    }
+}
 ```
 
 
