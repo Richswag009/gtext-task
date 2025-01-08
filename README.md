@@ -142,7 +142,7 @@ To obtain a JWT token, send a `POST` request to the `auth/login` endpoint with y
 Once you have the JWT token, include it in the Authorization header for all further requests.
 
 ## Endpoints
-1. List All Tasks
+### 1. List All Tasks
 **GET /api/tasks** 
 
 Fetches a list of all tasks for the authenticated user.
@@ -183,7 +183,7 @@ GET /api/tasks?priority=high&start_date=2025-01-01&end_date=2025-01-10&sort_by=d
 ```
 ---
 
-2. Get Task Details
+### 2. Get Task Details
 **GET /api/tasks/{task}**
 
 Fetches details of a specific task by its ID.
@@ -213,6 +213,80 @@ GET /api/tasks/1
 ```
 ---
 
+
+### 3. Create a New Task
+**POST /api/tasks**
+
+Create a new task.
+
+### Example Request
+```json
+{
+  "title": "Buy groceries",
+  "description": "Buy groceries for the week",
+  "priority": "low",
+  "due_date": "2025-01-15"
+}
+```
+
+### Example Response
+
+```json
+{
+  "id": 3,
+  "title": "Buy groceries",
+  "description": "Buy groceries for the week",
+  "priority": "low",
+  "due_date": "2025-01-15",
+  "user_id": 1
+}
+```
+---
+### 4. Update a Task
+
+**PUT /api/tasks/{task}**
+
+Update an existing task by its ID.
+
+URL Parameters
+- task: The ID of the task.
+### Example  Request
+```json
+{
+
+  "title": "Buy groceries and cook dinner",
+  "description": "Buy groceries and prepare dinner for the week",
+  "priority": "medium",
+  "due_date": "2025-01-16"
+}
+```
+### Example Response
+```json
+{
+  "id": 3,
+  "title": "Buy groceries and cook dinner",
+  "description": "Buy groceries and prepare dinner for the week",
+  "priority": "medium",
+  "due_date": "2025-01-16",
+  "user_id": 1
+}
+```
+### 5. Delete a Task
+**DELETE /api/tasks/{task}**
+
+Delete a specific task by its ID.
+
+URL Parameters
+- task: The ID of the task.
+### Example  Request
+
+**DELETE /api/tasks/3**
+## Example Response
+```json
+{
+  "message": "Task deleted successfully"
+}
+```
 
 <p align="center">
     <a href="https://laravel.com" target="_blank">
