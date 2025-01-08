@@ -2,7 +2,7 @@
 
 
 # Project Setup Guide
-# Task Management System
+
 ## Overview
 A simple yet powerful task management system to create, update, view, and manage tasks. It allows users to manage tasks with different priorities and deadlines, assign tasks to team members, and track progress. This API provides endpoints for managing 
 
@@ -23,8 +23,8 @@ Before you begin, make sure you have the following installed:
 
 
 ```bash
-git clone https://github.com/hardeex/bitz-backend
-cd bitz-backend
+git clonehttps://github.com/Richswag009/gtext-task.git
+cd gtext_task
 ```
 
 ### 3. Install Backend Dependencies
@@ -94,6 +94,123 @@ php artisan serve
 ```
 By default, the application will be accessible at http://localhost:8000.
 
+---
+
+# API Documentation for Task Management System
+
+## Overview
+
+This API provides endpoints to interact with the Task Management System. It includes operations for managing tasks, including CRUD (Create, Read, Update, Delete) operations, filtering, and sorting tasks based on priority, due date, etc.
+
+### Base URL
+
+**http://localhost:8000/api**
+
+## Authentication
+
+### JWT Token Authentication
+
+All endpoints require authentication via JWT tokens. To authenticate, include the JWT token in the `Authorization` header of your requests:
+
+## Authorization: Bearer {JWT_TOKEN}
+
+### Obtaining the JWT Token
+
+To obtain a JWT token, send a `POST` request to the `auth/login` endpoint with your login credentials (email and password).
+
+**POST** `/api/auth/login`
+
+#### Request
+
+```json
+  "email": "user@example.com",
+  "password": "yourpassword"
+```
+---
+
+### Response
+
+```json
+
+  "email": "user@example.com",
+  "password": "yourpassword"
+```
+
+
+---
+
+Once you have the JWT token, include it in the Authorization header for all further requests.
+
+## Endpoints
+1. List All Tasks
+**GET /api/tasks** 
+
+Fetches a list of all tasks for the authenticated user.
+
+Query Parameters
+- priority: (optional) Filter tasks by priority (e.g., high, medium, low).
+- start_date: (optional) Filter tasks by start date (e.g., 2025-01-01).
+- end_date: (optional) Filter tasks by end date (e.g., 2025-01-10).
+- sort_by: (optional) Sort tasks by field (e.g., due_date).
+- sort_order: (optional) Sort order, can be either asc or desc (default: asc).
+
+### Example Request
+
+```sql
+GET /api/tasks?priority=high&start_date=2025-01-01&end_date=2025-01-10&sort_by=due_date&sort_order=asc
+```
+---
+### Example Response
+```json
+[
+  {
+    "id": 1,
+    "title": "Finish project report",
+    "description": "Complete the final report for the project",
+    "priority": "high",
+    "due_date": "2025-01-10",
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "title": "Submit timesheet",
+    "description": "Submit your weekly timesheet",
+    "priority": "medium",
+    "due_date": "2025-01-08",
+    "user_id": 1
+  }
+]
+```
+---
+
+2. Get Task Details
+**GET /api/tasks/{task}**
+
+Fetches details of a specific task by its ID.
+
+URL Parameters
+- task: The ID of the task.
+
+### Example Request
+
+```sql
+GET /api/tasks/1
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Finish project report",
+    "description": "Complete the final report for the project",
+    "priority": "high",
+    "due_date": "2025-01-10",
+    "user_id": 1
+  },
+]
+```
 ---
 
 
