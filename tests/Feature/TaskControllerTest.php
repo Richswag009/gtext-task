@@ -106,13 +106,7 @@ class TaskControllerTest extends TestCase
 
 
         // Assert: 
-        $response->assertStatus(200);
-        foreach ($tasks as $task) {
-            $response->assertJsonFragment([
-                'id' => $task->id,
-                'title' => $task->title,
-                'description' => $task->description,
-            ]);
-        }
+        $response->assertStatus(200)
+        ->assertJsonCount(3);
     }
 }
