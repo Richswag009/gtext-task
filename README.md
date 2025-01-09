@@ -31,7 +31,7 @@ Before you begin, make sure you have the following installed:
 
 
 ```bash
-git clonehttps://github.com/Richswag009/gtext-task.git
+git clone https://github.com/Richswag009/gtext-task.git
 cd gtext_task
 ```
 
@@ -305,7 +305,9 @@ Create a new task.
 ---
 ### 4. Update a Task
 
-**PUT /api/tasks/{task}**
+```sql
+PUT /api/tasks/{task}**
+```
 
 Update an existing task by its ID.
 

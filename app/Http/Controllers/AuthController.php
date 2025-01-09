@@ -21,9 +21,9 @@ class AuthController extends Controller
     // }
     use HttpResponses;
 
-     // User registration
-     public function register(Request $request)
-     {
+    // User registration
+    public function register(Request $request)
+    {
 
         try {
             $validated = Validator::make($request->all(), [
@@ -31,89 +31,86 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6',
             ]);
-    
+
             if ($validated->fails()) {
-               return $this->invalidRequest($validated->errors());
-           }
-   
-   
+                return $this->invalidRequest($validated->errors());
+            }
+
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-    
+
             $token = Auth::login($user);
-   
-            return $this->success(compact('user','token'),'user register successfully');
+
+            return $this->success(compact('user', 'token'), 'user register successfully');
         } catch (\Throwable $th) {
             //throw $th;
             return $this->error($th->getMessage());
-
         }
-      
-     }
- 
+    }
 
 
-     // User login
-     public function login(Request $request)
-     {
+
+    // User login
+    public function login(Request $request)
+    {
 
         $validated = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-         if ($validated->fails()) {
+        if ($validated->fails()) {
             return $this->invalidRequest($validated->errors());
         }
-         $credentials = $request->only('email', 'password');
-         try {
-             if (! $token = JWTAuth::attempt($credentials)) {
-                 return $this->unauthorized('Invalid credentials') ; 
-             }
-              $user = auth()->user();
+        $credentials = $request->only('email', 'password');
+        try {
+            if (! $token = JWTAuth::attempt($credentials)) {
+                return $this->unauthorized('Invalid credentials');
+            }
+            $user = auth()->user();
 
-              $data = [
-                'user'=>$user,
+            $data = [
+                'user' => $user,
                 'authorization' => [
                     'token' => $token,
                     'type' => 'bearer',
                     'expires_in' => JWTAuth::factory()->getTTL() * 60
 
                 ]
-                ];
-             return $this->success($data,'login successful');
-         } catch (JWTException $e) {
-             return $this->error('Could not create token');
-         }
-     }
- 
-     // Get authenticated user
-     public function getUser()
-     {
-         try {
-             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                 return $this->badRequest('User not found');
-             }
-         } catch (JWTException $e) {
-             return $this->badRequest('Invalid token');
-         }
- 
-         return $this->success(compact('user'));
-     }
- 
+            ];
+            return $this->success($data, 'login successful');
+        } catch (JWTException $e) {
+            return $this->error('Could not create token');
+        }
+    }
 
-     // User logout
-    
+    // Get authenticated user
+    public function getUser()
+    {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return $this->badRequest('User not found');
+            }
+        } catch (JWTException $e) {
+            return $this->badRequest('Invalid token');
+        }
+
+        return $this->success(compact('user'));
+    }
+
+
+    // User logout
+
     public function logout()
     {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
 
             return $this->success('Successfully logged out');
-            
         } catch (\Exception $e) {
             return $this->error($e->getMessage() ?? 'Internal server error');
         }

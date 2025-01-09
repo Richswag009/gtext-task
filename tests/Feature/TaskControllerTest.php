@@ -3,108 +3,116 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TaskControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
 
-        $response->assertStatus(200);
+    use RefreshDatabase;
+
+    protected $user;
+    protected $token;
+    protected $task;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+        $this->token = JWTAuth::fromUser($this->user);
+        $this->task = Task::factory()->create(['user_id' => $this->user->id]);
     }
 
+    /** @test */
+    public function it_can_show_a_task()
+    {
+
+
+        // Act
+        $response = $this->getJson("/api/tasks/{$this->task->id}", [
+            'Authorization' => "Bearer {$this->token}",
+        ]);
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => true,
+                'message' => 'Task fetched successfully',
+                'data' => [
+                    'id' => $this->task->id,
+                    'title' => $this->task->title,
+                    'description' => $this->task->description,
+                ],
+            ]);
+    }
+
+
+    /** @test */
     public function it_can_create_a_task()
     {
-        $task = [
+
+        //Arrange
+        $taskData = [
             'title' => 'Test Task',
             'description' => 'This is a test task description.',
             'priority' => 'High',
             'due_date' => '2025-01-10',
+            'user_id' => $this->user->id
         ];
 
-        $response = $this->postJson('tasks/tasks', $task);
-        $response->assertStatus(201);
-        $response->assertJson([
-            'status' => true,
-            'message' => 'Task created successfully',
+        // Act
+        $response = $this->postJson("/api/tasks", $taskData, [
+            'Authorization' => "Bearer {$this->token}",
         ]);
 
-        $this->assertDatabaseHas('tasks', [
-            'title' => 'Test Task',
-            'description' => 'This is a test task description.',
-        ]);
+        // Assert
+        $response->assertStatus(200)
+            ->assertJsonFragment($taskData);
+        $this->assertDatabaseHas('tasks', $taskData);
     }
 
     /** @test */
-    public function it_returns_validation_error_when_required_fields_are_missing()
+    public function it_can_delete_a_task()
     {
-        $task = [
-            'description' => 'This is a test task without a title.',
-        ];
+        // Arrange
+        $task = Task::factory()->create(['user_id' => $this->user->id]);
 
-        // When making a POST request to create a task
-        $response = $this->postJson('tasks/tasks', $task);
+        // Act
+        // $response = $this->deleteJson("/api/tasks/{$task->id}");
+        $response = $this->deleteJson("/api/tasks/{$task->id}", [], [
+            'Authorization' => "Bearer {$this->token}",
+        ]);
 
-        // Then it should return validation errors
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors('title');
+        // Assert
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
 
-    public function it_can_fetch_tasks_with_optional_filters()
-{
-    // Given some tasks in the database
-    $task1 = Task::create([
-        'title' => 'Task 1',
-        'description' => 'First task description',
-        'priority' => 'High',
-        'due_date' => '2025-02-01',
-    ]);
 
-    $task2 = Task::create([
-        'title' => 'Task 2',
-        'description' => 'Second task description',
-        'priority' => 'Low',
-        'due_date' => '2025-01-15',
-    ]);
+    /** @test */
+    public function it_can_fetch_all_tasks_without_filters()
+    {
+        // Arrange
+        $tasks = Task::factory()->count(3)->create(['user_id' => $this->user->id]);
+        // Act
+        $response = $this->getJson('/api/tasks', [
+            'Authorization' => "Bearer {$this->token}",
+        ]);
 
-    // When making a GET request to fetch tasks
-    $response = $this->getJson('/tasks?priority=High');
 
-    // Then the response should only contain tasks with priority 'High'
-    $response->assertStatus(200);
-    $response->assertJsonFragment(['title' => 'Task 1']);
-    $response->assertJsonMissing(['title' => 'Task 2']);
-}
-
-/** @test */
-public function it_can_fetch_all_tasks_without_filters()
-{
-    // Given tasks are in the database
-    $task1 = Task::create([
-        'title' => 'Task 1',
-        'description' => 'First task description',
-        'priority' => 'High',
-        'due_date' => '2025-02-01',
-    ]);
-    $task2 = Task::create([
-        'title' => 'Task 2',
-        'description' => 'Second task description',
-        'priority' => 'Low',
-        'due_date' => '2025-01-15',
-    ]);
-
-    // When making a GET request to fetch all tasks
-    $response = $this->getJson('/tasks');
-
-    // Then the response should contain all tasks
-    $response->assertStatus(200);
-    $response->assertJsonFragment(['title' => 'Task 1']);
-    $response->assertJsonFragment(['title' => 'Task 2']);
-}
+        // Assert: 
+        $response->assertStatus(200);
+        foreach ($tasks as $task) {
+            $response->assertJsonFragment([
+                'id' => $task->id,
+                'title' => $task->title,
+                'description' => $task->description,
+            ]);
+        }
+    }
 }

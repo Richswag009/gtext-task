@@ -26,13 +26,7 @@ class TaskController extends Controller
 
         $user = auth()->user();
 
-        $query = Task::query()->where('user_id', $user->id);
-
-        // Log the priority to check what value is being sent
-        Log::info("Priority from request: " . $request->priority);
-   // Log the entire request parameters
-   Log::info("Request parameters: " . json_encode($request->all()));
-       
+        $query = Task::query()->where('user_id', $user->id); 
 
         if ($request->has('priority')) {
             $query->where('priority', $request->priority); 
@@ -93,7 +87,7 @@ class TaskController extends Controller
             return $this->notFound("Task not found for this user");
         }
 
-        return $this->success($task);
+        return $this->success($task,"Task fetched successfully");
     }
 
     /**
