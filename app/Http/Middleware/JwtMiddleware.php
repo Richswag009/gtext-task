@@ -20,21 +20,15 @@ class JwtMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-       
-    if ($request->is('register') || $request->is('login')) {
+
+        if ($request->is('register') || $request->is('login')) {
+            return $next($request);
+        }
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+        } catch (JWTException $e) {
+            return $this->unauthorized('Token not valids');
+        }
         return $next($request);
     }
-    try {
-        $user = JWTAuth::parseToken()->authenticate();
-    } catch (JWTException $e) {
-        return $this->unauthorized('Token not valids');
-    }
-    return $next($request);
-    }
-
-
-
-
-
-
 }

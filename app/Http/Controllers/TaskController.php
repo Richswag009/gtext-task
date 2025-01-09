@@ -26,10 +26,10 @@ class TaskController extends Controller
 
         $user = auth()->user();
 
-        $query = Task::query()->where('user_id', $user->id); 
+        $query = Task::query()->where('user_id', $user->id);
 
         if ($request->has('priority')) {
-            $query->where('priority', $request->priority); 
+            $query->where('priority', $request->priority);
         }
 
         if ($request->has(['start_date', 'end_date'])) {
@@ -87,7 +87,7 @@ class TaskController extends Controller
             return $this->notFound("Task not found for this user");
         }
 
-        return $this->success($task,"Task fetched successfully");
+        return $this->success($task, "Task fetched successfully");
     }
 
     /**
