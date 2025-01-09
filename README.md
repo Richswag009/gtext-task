@@ -97,12 +97,12 @@ This command will update your .env file with a JWT_SECRET value. If you already 
 
 ### 9. Start the Application
 
-Once everything is set up, you can test the application by visiting the frontend in your browser. The frontend should now be able to communicate with the backend API and everything should work as expected.
+Once everything is set up, you can test the application by visiting the url
 
 ```bash
 php artisan serve
 ```
-By default, the application will be accessible at http://localhost:8000.
+By default, the application will be accessible at http://localhost:8000/api.
 
 ---
 
@@ -110,7 +110,7 @@ By default, the application will be accessible at http://localhost:8000.
 
 ## Overview
 
-This API provides endpoints to interact with the Task Management System. It includes operations for managing tasks, including CRUD (Create, Read, Update, Delete) operations, filtering, and sorting tasks based on priority, due date, etc.
+This API provides endpoints to interact with the Task Management System. It includes operations for registering users,login, managing tasks, including CRUD (Create, Read, Update, Delete) operations, filtering, and sorting tasks based on priority, due date, etc.
 
 ### Base URL
 
