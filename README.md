@@ -95,7 +95,7 @@ This command will update your .env file with a JWT_SECRET value. If you already 
 
 ---
 
-### 9. Start the Application
+### 7. Start the Application
 
 Once everything is set up, you can test the application by visiting the url
 
